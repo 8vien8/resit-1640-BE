@@ -1,0 +1,7 @@
+[
+  {
+    "_id": { "$oid": "64f000000000000000000071" },
+    "tnCText": "Terms and conditions text goes here...",
+    "versionDate": "2024-08-31T09:00:00Z"
+  }
+]

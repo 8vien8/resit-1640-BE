@@ -1,0 +1,10 @@
+[
+  {
+    "_id": { "$oid": "64f000000000000000000061" },
+    "contributionID": { "$oid": "64f000000000000000000031" },
+    "fileName": "research_paper.pdf",
+    "filePath": "/uploads/research_paper.pdf",
+    "fileType": "pdf",
+    "uploadDate": "2024-08-31T12:00:00Z"
+  }
+]

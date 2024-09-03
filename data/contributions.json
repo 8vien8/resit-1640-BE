@@ -1,0 +1,12 @@
+[
+  {
+    "_id": { "$oid": "64f000000000000000000031" },
+    "userID": { "$oid": "64f000000000000000000001" },
+    "facultyID": { "$oid": "64f000000000000000000021" },
+    "title": "Innovative AI Research",
+    "content": "Content of the contribution goes here...",
+    "submissionDate": "2024-08-31T10:30:00Z",
+    "statusID": { "$oid": "64f000000000000000000041" },
+    "agreedToTnC": true
+  }
+]

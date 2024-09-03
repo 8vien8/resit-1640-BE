@@ -1,0 +1,18 @@
+[
+  {
+    "_id": { "$oid": "64f000000000000000000001" },
+    "username": "john_doe",
+    "passwordHash": "hashed_password_here",
+    "email": "john.doe@example.com",
+    "roleID": { "$oid": "64f000000000000000000011" },
+    "facultyID": { "$oid": "64f000000000000000000021" }
+  },
+  {
+    "_id": { "$oid": "64f000000000000000000002" },
+    "username": "jane_smith",
+    "passwordHash": "hashed_password_here",
+    "email": "jane.smith@example.com",
+    "roleID": { "$oid": "64f000000000000000000012" },
+    "facultyID": { "$oid": "64f000000000000000000022" }
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "_id": { "$oid": "64f000000000000000000051" },
+    "contributionID": { "$oid": "64f000000000000000000031" },
+    "userID": { "$oid": "64f000000000000000000001" },
+    "commentText": "This is a comment on the contribution.",
+    "commentDate": "2024-08-31T11:00:00Z"
+  }
+]
