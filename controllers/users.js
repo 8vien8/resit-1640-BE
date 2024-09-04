@@ -1,11 +1,11 @@
 const User = require('../models/users');
+const cloudinary = require('../config/cloudinary');
 
 // @desc Get all users
 // @route GET /api/users
 exports.getUsers = async (req, res) => {
     try {
         const users = await User.find().populate('roleID').populate('facultyID');
-        console.log(users);
         res.json(users);
     } catch (err) {
         console.error('Error fetching users:', err.message);
@@ -30,17 +30,26 @@ exports.getUserById = async (req, res) => {
 exports.createUser = async (req, res) => {
     try {
         const { username, passwordHash, email, roleID, facultyID } = req.body;
+        const avatar = req.file.path;
+
+        if (!req.file) {
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+
         const newUser = new User({
             username,
             passwordHash,
             email,
             roleID,
-            facultyID
+            facultyID,
+            avatar
         });
+
         await newUser.save();
         res.status(201).json(newUser);
     } catch (err) {
-        res.status(500).json({ message: 'Server Error' });
+        console.error('Error creating user:', err);
+        res.status(500).send('Server Error');
     }
 };
 
@@ -49,17 +58,32 @@ exports.createUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
     try {
         const { username, passwordHash, email, roleID, facultyID } = req.body;
+        let avatarUrl = req.body.avatar;
+
+        if (req.file) {
+            const result = await cloudinary.uploader.upload(req.file.path, {
+                folder: 'avatars'
+            });
+
+            avatarUrl = result.secure_url;
+        } else {
+            console.log('No file uploaded');
+        }
+
         const updatedUser = await User.findByIdAndUpdate(
             req.params.id,
-            { username, passwordHash, email, roleID, facultyID },
+            { username, passwordHash, email, roleID, facultyID, avatar: avatarUrl },
             { new: true }
-        ).populate('roleID').populate('facultyID');
-        if (!updatedUser) return res.status(404).json({ message: 'User not found' });
+        );
+
+        if (!updatedUser) return res.status(404).send('User not found');
         res.json(updatedUser);
     } catch (err) {
-        res.status(500).json({ message: 'Server Error' });
+        console.error('Error updating user:', err);
+        res.status(500).send('Server Error');
     }
 };
+
 
 // @desc Delete a user
 // @route DELETE /api/users/:id
