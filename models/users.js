@@ -25,6 +25,10 @@ const UserSchema = new mongoose.Schema({
         ref: 'Faculty',
         required: true,
     },
+    avatar: {
+        type: String,
+        default: 'https://res.cloudinary.com/default_avatar.png'
+    }
 }, { collection: 'users' });
 
 module.exports = mongoose.model('User', UserSchema);

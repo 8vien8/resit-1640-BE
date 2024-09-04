@@ -26,7 +26,7 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use('/uploads', express.static('uploads')); // Serve static files from uploads directory
+// app.use('/uploads', express.static('uploads')); // Serve static files from uploads directory
 
 // Route for landing page
 app.get('/', (req, res) => {
