@@ -14,6 +14,7 @@ const facultiesRoutes = require('./routes/faculties');
 const contributionStatusRoutes = require('./routes/contributionStatus');
 const contributionsRoutes = require('./routes/contributions');
 const commentsRoutes = require('./routes/comments');
+const authRoutes = require('./routes/auth');
 
 // Load environment variables
 require('dotenv').config();
@@ -44,6 +45,7 @@ app.use('/api/files', filesRoutes);
 app.use('/api/terms-and-conditions', termsConditionsRoutes);
 app.use('/api/statistics', statisticsRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/auth', authRoutes);
 
 // Catch-all route for undefined routes
 app.use((req, res, next) => {
