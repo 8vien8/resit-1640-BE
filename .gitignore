@@ -1,0 +1,10 @@
+data/
+uploads/
+.env
+node_modules/
+*.log
+.DS_Store
+.vscode/
+.idea/
+*.tmp
+*.bak
