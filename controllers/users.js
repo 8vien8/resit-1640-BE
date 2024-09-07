@@ -25,6 +25,42 @@ exports.getUserById = async (req, res) => {
     }
 };
 
+// @desc Get user by Role ID
+// @route GET /api/role/:roleID
+exports.getUsersByRole = async (req, res) => {
+    try {
+        const { roleID } = req.params;
+        const users = await User.find({ roleID }).populate('roleID').populate('facultyID');
+
+        if (users.length === 0) {
+            return res.status(404).json({ message: 'No users found for this role' });
+        }
+
+        res.json(users);
+    } catch (err) {
+        console.error('Error fetching users by role:', err.message);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
+// @desc Get user by Faculty ID
+// @route GET /api/faculty/:facultyID
+exports.getUsersByFaculty = async (req, res) => {
+    try {
+        const { facultyID } = req.params;
+        const users = await User.find({ facultyID }).populate('roleID').populate('facultyID');
+
+        if (users.length === 0) {
+            return res.status(404).json({ message: 'No users found for this faculty' });
+        }
+
+        res.json(users);
+    } catch (err) {
+        console.error('Error fetching users by role:', err.message);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
 // @desc Create a new user
 // @route POST /api/users
 exports.createUser = async (req, res) => {
@@ -83,7 +119,6 @@ exports.updateUser = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
-
 
 // @desc Delete a user
 // @route DELETE /api/users/:id

@@ -1,6 +1,4 @@
 const mongoose = require('mongoose');
-require('./roles');
-require('./faculties');
 const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({
