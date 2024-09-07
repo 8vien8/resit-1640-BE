@@ -9,6 +9,14 @@
   },
   {
     "_id": { "$oid": "64f000000000000000000013" },
-    "roleName": "Contributor"
+    "roleName": "Coordinator"
+  },
+  {
+    "_id": { "$oid": "64f000000000000000000014" },
+    "roleName": "Student"
+  },
+  {
+    "_id": { "$oid": "64f000000000000000000015" },
+    "roleName": "Register"
   }
 ]

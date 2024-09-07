@@ -14,5 +14,29 @@
     "email": "jane.smith@example.com",
     "roleID": { "$oid": "64f000000000000000000012" },
     "facultyID": { "$oid": "64f000000000000000000022" }
+  },
+  {
+    "_id": { "$oid": "64f000000000000000000003" },
+    "username": "jenny_kimson",
+    "passwordHash": "hashed_password_here",
+    "email": "jenny.kimson@example.com",
+    "roleID": { "$oid": "64f000000000000000000013" },
+    "facultyID": { "$oid": "64f000000000000000000023" }
+  },
+  {
+    "_id": { "$oid": "64f000000000000000000004" },
+    "username": "lucas_ammando",
+    "passwordHash": "hashed_password_here",
+    "email": "lucas.ammando@example.com",
+    "roleID": { "$oid": "64f000000000000000000014" },
+    "facultyID": { "$oid": "64f000000000000000000024" }
+  },
+  {
+    "_id": { "$oid": "64f000000000000000000005" },
+    "username": "tylor_swift",
+    "passwordHash": "hashed_password_here",
+    "email": "tylor.swift@example.com",
+    "roleID": { "$oid": "64f000000000000000000015" },
+    "facultyID": { "$oid": "64f000000000000000000025" }
   }
 ]

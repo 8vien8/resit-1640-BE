@@ -13,4 +13,8 @@ router.put('/:id', upload, usersController.updateUser);
 
 router.delete('/:id', usersController.deleteUser);
 
+router.get('/role/:roleID', usersController.getUsersByRole);
+
+router.get('/faculty/:facultyID', usersController.getUsersByFaculty);
+
 module.exports = router;
