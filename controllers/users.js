@@ -2,8 +2,6 @@ const User = require('../models/users');
 const cloudinary = require('../config/cloudinary');
 const bcrypt = require('bcrypt');
 
-// @desc Get all users
-// @route GET /api/users
 exports.getUsers = async (req, res) => {
     try {
         const users = await User.find().populate('roleID').populate('facultyID');
@@ -14,8 +12,6 @@ exports.getUsers = async (req, res) => {
     }
 };
 
-// @desc Get user by ID
-// @route GET /api/users/:id
 exports.getUserById = async (req, res) => {
     try {
         const user = await User.findById(req.params.id).populate('roleID').populate('facultyID');
@@ -26,8 +22,6 @@ exports.getUserById = async (req, res) => {
     }
 };
 
-// @desc Get user by Role ID
-// @route GET /api/role/:roleID
 exports.getUsersByRole = async (req, res) => {
     try {
         const { roleID } = req.params;
@@ -44,8 +38,6 @@ exports.getUsersByRole = async (req, res) => {
     }
 };
 
-// @desc Get user by Faculty ID
-// @route GET /api/faculty/:facultyID
 exports.getUsersByFaculty = async (req, res) => {
     try {
         const { facultyID } = req.params;
@@ -62,8 +54,6 @@ exports.getUsersByFaculty = async (req, res) => {
     }
 };
 
-// @desc Create a new user
-// @route POST /api/users
 exports.createUser = async (req, res) => {
     try {
         const { username, passwordHash, email, roleID, facultyID } = req.body;
@@ -90,11 +80,6 @@ exports.createUser = async (req, res) => {
     }
 };
 
-// @desc Update a user
-// @route PUT /api/users/:id
-
-// @desc Update a user
-// @route PUT /api/users/:id
 exports.updateUser = async (req, res) => {
     try {
         const { username, passwordHash, email, roleID, facultyID } = req.body;
@@ -109,16 +94,13 @@ exports.updateUser = async (req, res) => {
             console.log('No file uploaded');
         }
 
-        // Prepare update data object
         const updateData = { username, email, roleID, facultyID, avatar: avatarUrl };
 
-        // If a new password is provided, hash it before updating
         if (passwordHash) {
             const salt = await bcrypt.genSalt(10);
             updateData.passwordHash = await bcrypt.hash(passwordHash, salt);
         }
 
-        // Update the user with the new data
         const updatedUser = await User.findByIdAndUpdate(
             req.params.id,
             updateData,
@@ -133,8 +115,6 @@ exports.updateUser = async (req, res) => {
     }
 };
 
-// @desc Delete a user
-// @route DELETE /api/users/:id
 exports.deleteUser = async (req, res) => {
     try {
         const user = await User.findByIdAndDelete(req.params.id);

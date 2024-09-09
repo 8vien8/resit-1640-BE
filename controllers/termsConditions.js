@@ -1,7 +1,5 @@
 const TermsAndConditions = require('../models/termsConditions');
 
-// @desc Get all terms and conditions
-// @route GET /api/terms_and_conditions
 exports.getTermsAndConditions = async (req, res) => {
     try {
         const termsAndConditions = await TermsAndConditions.find();
@@ -11,8 +9,6 @@ exports.getTermsAndConditions = async (req, res) => {
     }
 };
 
-// @desc Get terms and conditions by ID
-// @route GET /api/terms_and_conditions/:id
 exports.getTermsAndConditionsById = async (req, res) => {
     try {
         const termsAndConditions = await TermsAndConditions.findById(req.params.id);
@@ -23,8 +19,6 @@ exports.getTermsAndConditionsById = async (req, res) => {
     }
 };
 
-// @desc Create a new terms and conditions
-// @route POST /api/terms_and_conditions
 exports.createTermsAndConditions = async (req, res) => {
     try {
         const { content, version, createdDate } = req.body;
@@ -36,8 +30,6 @@ exports.createTermsAndConditions = async (req, res) => {
     }
 };
 
-// @desc Update terms and conditions
-// @route PUT /api/terms_and_conditions/:id
 exports.updateTermsAndConditions = async (req, res) => {
     try {
         const { content, version, createdDate } = req.body;
@@ -53,8 +45,6 @@ exports.updateTermsAndConditions = async (req, res) => {
     }
 };
 
-// @desc Delete terms and conditions
-// @route DELETE /api/terms_and_conditions/:id
 exports.deleteTermsAndConditions = async (req, res) => {
     try {
         const termsAndConditions = await TermsAndConditions.findByIdAndDelete(req.params.id);

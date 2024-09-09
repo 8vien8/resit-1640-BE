@@ -1,7 +1,5 @@
 const Setting = require('../models/systemSettings');
 
-// @desc Get all settings
-// @route GET /api/settings
 exports.getSettings = async (req, res) => {
     try {
         const settings = await Setting.find();
@@ -11,8 +9,6 @@ exports.getSettings = async (req, res) => {
     }
 };
 
-// @desc Get a setting by ID
-// @route GET /api/settings/:id
 exports.getSettingById = async (req, res) => {
     try {
         const setting = await Setting.findById(req.params.id);
@@ -23,8 +19,6 @@ exports.getSettingById = async (req, res) => {
     }
 };
 
-// @desc Create a new setting
-// @route POST /api/settings
 exports.createSetting = async (req, res) => {
     try {
         const { settingName, settingValue } = req.body;
@@ -36,8 +30,6 @@ exports.createSetting = async (req, res) => {
     }
 };
 
-// @desc Update a setting
-// @route PUT /api/settings/:id
 exports.updateSetting = async (req, res) => {
     try {
         const { settingName, settingValue } = req.body;
@@ -53,8 +45,6 @@ exports.updateSetting = async (req, res) => {
     }
 };
 
-// @desc Delete a setting
-// @route DELETE /api/settings/:id
 exports.deleteSetting = async (req, res) => {
     try {
         const setting = await Setting.findByIdAndDelete(req.params.id);

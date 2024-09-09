@@ -1,7 +1,5 @@
 const Contribution = require('../models/contributions');
 
-// @desc Get all contributions
-// @route GET /api/contributions
 exports.getContributions = async (req, res) => {
     try {
         const contributions = await Contribution.find()
@@ -14,8 +12,6 @@ exports.getContributions = async (req, res) => {
     }
 };
 
-// @desc Get contribution by ID
-// @route GET /api/contributions/:id
 exports.getContributionById = async (req, res) => {
     try {
         const contribution = await Contribution.findById(req.params.id)
@@ -29,8 +25,6 @@ exports.getContributionById = async (req, res) => {
     }
 };
 
-// @desc Create a new contribution
-// @route POST /api/contributions
 exports.createContribution = async (req, res) => {
     try {
         const { userID, facultyID, title, content, submissionDate, statusID, agreedToTnC } = req.body;
@@ -42,8 +36,6 @@ exports.createContribution = async (req, res) => {
     }
 };
 
-// @desc Update a contribution
-// @route PUT /api/contributions/:id
 exports.updateContribution = async (req, res) => {
     try {
         const { userID, facultyID, title, content, submissionDate, statusID, agreedToTnC } = req.body;
@@ -61,8 +53,6 @@ exports.updateContribution = async (req, res) => {
     }
 };
 
-// @desc Delete a contribution
-// @route DELETE /api/contributions/:id
 exports.deleteContribution = async (req, res) => {
     try {
         const contribution = await Contribution.findByIdAndDelete(req.params.id);

@@ -1,7 +1,5 @@
 const File = require('../models/files');
 
-// @desc Get all files
-// @route GET /api/files
 exports.getFiles = async (req, res) => {
     try {
         const files = await File.find().populate('contributionID');
@@ -11,8 +9,6 @@ exports.getFiles = async (req, res) => {
     }
 };
 
-// @desc Get file by ID
-// @route GET /api/files/:id
 exports.getFileById = async (req, res) => {
     try {
         const file = await File.findById(req.params.id).populate('contributionID');
@@ -23,8 +19,6 @@ exports.getFileById = async (req, res) => {
     }
 };
 
-// @desc Create a new file
-// @route POST /api/files
 exports.createFile = async (req, res) => {
     try {
         const { contributionID, filePath, fileType, uploadDate } = req.body;
@@ -36,8 +30,6 @@ exports.createFile = async (req, res) => {
     }
 };
 
-// @desc Update a file
-// @route PUT /api/files/:id
 exports.updateFile = async (req, res) => {
     try {
         const { contributionID, filePath, fileType, uploadDate } = req.body;
@@ -53,8 +45,6 @@ exports.updateFile = async (req, res) => {
     }
 };
 
-// @desc Delete a file
-// @route DELETE /api/files/:id
 exports.deleteFile = async (req, res) => {
     try {
         const file = await File.findByIdAndDelete(req.params.id);

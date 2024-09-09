@@ -1,7 +1,5 @@
 const Comment = require('../models/comments');
 
-// @desc Get all comments
-// @route GET /api/comments
 exports.getComments = async (req, res) => {
     try {
         const comments = await Comment.find()
@@ -13,8 +11,6 @@ exports.getComments = async (req, res) => {
     }
 };
 
-// @desc Get comment by ID
-// @route GET /api/comments/:id
 exports.getCommentById = async (req, res) => {
     try {
         const comment = await Comment.findById(req.params.id)
@@ -27,8 +23,6 @@ exports.getCommentById = async (req, res) => {
     }
 };
 
-// @desc Create a new comment
-// @route POST /api/comments
 exports.createComment = async (req, res) => {
     try {
         const { contributionID, userID, commentText, commentDate } =
@@ -36,7 +30,7 @@ exports.createComment = async (req, res) => {
         await newComment.save(); res.status(201).json(newComment);
     } catch (err) { res.status(500).send('Server Error'); }
 };
-// @desc Update a comment // @route PUT /api/comments/
+
 exports.updateComment = async (req, res) => {
     try {
         const { contributionID, userID, commentText, commentDate } = req.body;
@@ -49,7 +43,6 @@ exports.updateComment = async (req, res) => {
     } catch (err) { res.status(500).send('Server Error'); }
 };
 
-// @desc Delete a comment // @route DELETE /api/comments/
 exports.deleteComment = async (req, res) => {
     try {
         const comment = await Comment.findByIdAndDelete(req.params.id);

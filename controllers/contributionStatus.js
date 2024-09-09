@@ -1,7 +1,5 @@
 const ContributionStatus = require('../models/contributionsStatus');
 
-// @desc Get all contribution statuses
-// @route GET /api/contribution_status
 exports.getContributionStatuses = async (req, res) => {
     try {
         const statuses = await ContributionStatus.find();
@@ -11,8 +9,6 @@ exports.getContributionStatuses = async (req, res) => {
     }
 };
 
-// @desc Get contribution status by ID
-// @route GET /api/contribution_status/:id
 exports.getContributionStatusById = async (req, res) => {
     try {
         const status = await ContributionStatus.findById(req.params.id);
@@ -23,8 +19,6 @@ exports.getContributionStatusById = async (req, res) => {
     }
 };
 
-// @desc Create a new contribution status
-// @route POST /api/contribution_status
 exports.createContributionStatus = async (req, res) => {
     try {
         const { statusName } = req.body;
@@ -36,8 +30,7 @@ exports.createContributionStatus = async (req, res) => {
     }
 };
 
-// @desc Update a contribution status
-// @route PUT /api/contribution_status/:id
+
 exports.updateContributionStatus = async (req, res) => {
     try {
         const { statusName } = req.body;
@@ -53,8 +46,6 @@ exports.updateContributionStatus = async (req, res) => {
     }
 };
 
-// @desc Delete a contribution status
-// @route DELETE /api/contribution_status/:id
 exports.deleteContributionStatus = async (req, res) => {
     try {
         const status = await ContributionStatus.findByIdAndDelete(req.params.id);

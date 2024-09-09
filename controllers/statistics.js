@@ -1,7 +1,5 @@
 const Statistics = require('../models/statistics');
 
-// @desc Get all statistics
-// @route GET /api/statistics
 exports.getStatistics = async (req, res) => {
     try {
         const statistics = await Statistics.find();
@@ -11,8 +9,6 @@ exports.getStatistics = async (req, res) => {
     }
 };
 
-// @desc Get statistics by ID
-// @route GET /api/statistics/:id
 exports.getStatisticsById = async (req, res) => {
     try {
         const statistics = await Statistics.findById(req.params.id);
@@ -23,8 +19,6 @@ exports.getStatisticsById = async (req, res) => {
     }
 };
 
-// @desc Create new statistics
-// @route POST /api/statistics
 exports.createStatistics = async (req, res) => {
     try {
         const { data, createdDate } = req.body;
@@ -36,8 +30,6 @@ exports.createStatistics = async (req, res) => {
     }
 };
 
-// @desc Update statistics
-// @route PUT /api/statistics/:id
 exports.updateStatistics = async (req, res) => {
     try {
         const { data, createdDate } = req.body;
@@ -53,8 +45,6 @@ exports.updateStatistics = async (req, res) => {
     }
 };
 
-// @desc Delete statistics
-// @route DELETE /api/statistics/:id
 exports.deleteStatistics = async (req, res) => {
     try {
         const statistics = await Statistics.findByIdAndDelete(req.params.id);

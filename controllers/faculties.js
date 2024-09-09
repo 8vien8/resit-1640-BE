@@ -1,7 +1,5 @@
 const Faculty = require('../models/faculties');
 
-// @desc Get all faculties
-// @route GET /api/faculties
 exports.getFaculties = async (req, res) => {
     try {
         const faculties = await Faculty.find();
@@ -11,8 +9,6 @@ exports.getFaculties = async (req, res) => {
     }
 };
 
-// @desc Get faculty by ID
-// @route GET /api/faculties/:id
 exports.getFacultyById = async (req, res) => {
     try {
         const faculty = await Faculty.findById(req.params.id);
@@ -23,8 +19,6 @@ exports.getFacultyById = async (req, res) => {
     }
 };
 
-// @desc Create a new faculty
-// @route POST /api/faculties
 exports.createFaculty = async (req, res) => {
     try {
         const { facultyName } = req.body;
@@ -36,8 +30,6 @@ exports.createFaculty = async (req, res) => {
     }
 };
 
-// @desc Update a faculty
-// @route PUT /api/faculties/:id
 exports.updateFaculty = async (req, res) => {
     try {
         const { facultyName } = req.body;
@@ -53,8 +45,6 @@ exports.updateFaculty = async (req, res) => {
     }
 };
 
-// @desc Delete a faculty
-// @route DELETE /api/faculties/:id
 exports.deleteFaculty = async (req, res) => {
     try {
         const faculty = await Faculty.findByIdAndDelete(req.params.id);
