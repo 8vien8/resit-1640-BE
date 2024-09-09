@@ -1,5 +1,6 @@
 const User = require('../models/users');
 const cloudinary = require('../config/cloudinary');
+const bcrypt = require('bcrypt');
 
 // @desc Get all users
 // @route GET /api/users
@@ -91,6 +92,9 @@ exports.createUser = async (req, res) => {
 
 // @desc Update a user
 // @route PUT /api/users/:id
+
+// @desc Update a user
+// @route PUT /api/users/:id
 exports.updateUser = async (req, res) => {
     try {
         const { username, passwordHash, email, roleID, facultyID } = req.body;
@@ -100,19 +104,28 @@ exports.updateUser = async (req, res) => {
             const result = await cloudinary.uploader.upload(req.file.path, {
                 folder: 'avatars'
             });
-
             avatarUrl = result.secure_url;
         } else {
             console.log('No file uploaded');
         }
 
+        // Prepare update data object
+        const updateData = { username, email, roleID, facultyID, avatar: avatarUrl };
+
+        // If a new password is provided, hash it before updating
+        if (passwordHash) {
+            const salt = await bcrypt.genSalt(10);
+            updateData.passwordHash = await bcrypt.hash(passwordHash, salt);
+        }
+
+        // Update the user with the new data
         const updatedUser = await User.findByIdAndUpdate(
             req.params.id,
-            { username, passwordHash, email, roleID, facultyID, avatar: avatarUrl },
+            updateData,
             { new: true }
         );
 
-        if (!updatedUser) return res.status(404).send('User not found');
+        if (!updatedUser) return res.status(404).json({ message: 'User not found' });
         res.json(updatedUser);
     } catch (err) {
         console.error('Error updating user:', err);
