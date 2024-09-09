@@ -5,6 +5,7 @@ const User = require('../models/users');
 exports.register = async (req, res) => {
     try {
         const { username, password, email, roleID, facultyID } = req.body;
+        const defaultRoleID = roleID || "64f000000000000000000015"
 
         // Check if the user already exists
         let user = await User.findOne({ email });
@@ -17,7 +18,7 @@ exports.register = async (req, res) => {
             username,
             passwordHash: password,
             email,
-            roleID,
+            roleID: defaultRoleID,
             facultyID
         });
 
