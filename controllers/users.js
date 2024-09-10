@@ -64,7 +64,7 @@ exports.createUser = async (req, res) => {
             return res.status(400).json({ message: 'No file uploaded' });
         }
 
-        const randomPassword = crypto.randomBytes(8).toString('hex');
+        const randomPassword = crypto.randomBytes(10).toString('hex');
 
         const avatarUrl = req.file.path;
 
@@ -114,7 +114,7 @@ exports.createUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
     try {
-        const { username, passwordHash, email, roleID, facultyID } = req.body;
+        const { username, password, email, roleID, facultyID } = req.body;
         let avatarUrl = req.body.avatar;
 
         if (req.file) {
@@ -126,11 +126,17 @@ exports.updateUser = async (req, res) => {
             console.log('No file uploaded');
         }
 
-        const updateData = { username, email, roleID, facultyID, avatar: avatarUrl };
+        const updateData = {
+            username,
+            email,
+            roleID, facultyID,
+            passwordHash: password,
+            avatar: avatarUrl
+        };
 
-        if (passwordHash) {
+        if (password) {
             const salt = await bcrypt.genSalt(10);
-            updateData.passwordHash = await bcrypt.hash(passwordHash, salt);
+            updateData.passwordHash = await bcrypt.hash(password, salt);
         }
 
         const updatedUser = await User.findByIdAndUpdate(

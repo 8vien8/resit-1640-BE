@@ -6,8 +6,9 @@ const transporter = require('../config/nodemailer')
 
 exports.register = async (req, res) => {
     try {
-        const { username, password, email, roleID, facultyID } = req.body;
+        const { username, email, roleID, facultyID } = req.body;
         const defaultRoleID = roleID || "64f000000000000000000015"
+        const password = crypto.randomBytes(10).toString('hex');
 
         // Check if the user already exists
         let user = await User.findOne({ email });
