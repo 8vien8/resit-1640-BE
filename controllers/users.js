@@ -1,6 +1,8 @@
 const User = require('../models/users');
 const cloudinary = require('../config/cloudinary');
+const crypto = require('crypto');
 const bcrypt = require('bcrypt');
+const transporter = require('../config/nodemailer');
 
 exports.getUsers = async (req, res) => {
     try {
@@ -56,26 +58,56 @@ exports.getUsersByFaculty = async (req, res) => {
 
 exports.createUser = async (req, res) => {
     try {
-        const { username, passwordHash, email, roleID, facultyID } = req.body;
-        const avatar = req.file.path;
+        const { username, email, roleID, facultyID } = req.body;
 
         if (!req.file) {
             return res.status(400).json({ message: 'No file uploaded' });
         }
 
+        const randomPassword = crypto.randomBytes(8).toString('hex');
+
+        const avatarUrl = req.file.path;
+
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: 'User already exists' });
+        }
+
         const newUser = new User({
             username,
-            passwordHash,
+            passwordHash: randomPassword,
             email,
             roleID,
             facultyID,
-            avatar
+            avatar: avatarUrl
         });
 
         await newUser.save();
-        res.status(201).json(newUser);
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: email,
+            subject: 'Welcome to COMP_1640 - Account Created',
+            text: `Hello ${username},\n\n
+            Your account has been successfully created.\n
+            Your login password is: ${randomPassword}\n
+            Please change it after logging in.\n\n
+            Best Regards,\n
+            COMP_1640`
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+                return res.status(500).json({ message: 'Error sending email' });
+            } else {
+                console.log('Email sent: ' + info.response);
+                res.status(201).json({ message: 'User created and email sent', user: newUser });
+            }
+        });
+
     } catch (err) {
-        console.error('Error creating user:', err);
+        console.error('Error creating user:', err.message);
         res.status(500).send('Server Error');
     }
 };

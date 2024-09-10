@@ -28,6 +28,15 @@ const UserSchema = new mongoose.Schema({
     avatar: {
         type: String,
         default: 'https://res.cloudinary.com/default_avatar.png'
+    },
+    resetPasswordToken: {
+        type: String,
+        unique: true,
+        default: null,
+    },
+    resetPasswordExpires: {
+        type: Date,
+        default: null,
     }
 }, { collection: 'users' });
 
