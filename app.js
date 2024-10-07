@@ -27,6 +27,7 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.json());
 // app.use('/uploads', express.static('uploads')); // Serve static files from uploads directory
 
 // Route for landing page
@@ -48,8 +49,6 @@ app.use('/api/terms-and-conditions', termsConditionsRoutes);
 app.use('/api/statistics', statisticsRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/auth/forgot-password', authRoutes)
-app.use('/api/auth/reset-password/:token', authRoutes)
 
 // Catch-all route for undefined routes
 app.use((req, res, next) => {

@@ -7,7 +7,8 @@ const transporter = require('../config/nodemailer')
 exports.register = async (req, res) => {
     try {
         const { username, email, roleID, facultyID } = req.body;
-        const defaultRoleID = roleID || "64f000000000000000000015"
+        const defaultRoleID = roleID || "64f000000000000000000015";
+        const defaultFacultyID = facultyID || "64f000000000000000000021"
         const password = crypto.randomBytes(10).toString('hex');
 
         // Check if the user already exists
@@ -19,13 +20,36 @@ exports.register = async (req, res) => {
         // Create a new user
         user = new User({
             username,
-            passwordHash: password,
+            passwordHash: password,  // You should hash the password here
             email,
             roleID: defaultRoleID,
-            facultyID
+            facultyID: defaultFacultyID,
         });
 
         await user.save();
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,  // Sender's email address
+            to: email,  // Recipient's email address
+            subject: 'Welcome to COMP_1640 - Your Account Details',
+            text: `--------------------------------Hello ${username}---------------------------\n
+                   Welcome to COMP_1640! Your account has been created successfully.\n
+                   Here are your login credentials:\n
+                   Username: ${username}\n
+                   Password: ${password}\n
+                   Please make sure to change your password after logging in for the first time.\n
+                   Best Regards,\n
+                   COMP_1640 Team`
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+                return res.status(500).json({ message: 'Error sending email' });
+            } else {
+                console.log('Email sent: ', info.response);
+            }
+        });
 
         // Create a JWT
         const payload = {
@@ -41,7 +65,7 @@ exports.register = async (req, res) => {
             { expiresIn: '1h' },
             (err, token) => {
                 if (err) throw err;
-                res.status(201).json({ token });
+                res.status(201).json({ token, message: 'User registered and email sent with password' });
             }
         );
     } catch (err) {
@@ -63,7 +87,7 @@ exports.login = async (req, res) => {
         // Check password
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid credentials' });
+            return res.status(400).json({ message: 'Invalid credentials (password)' });
         }
 
         // Create a JWT
@@ -92,7 +116,6 @@ exports.login = async (req, res) => {
     }
 };
 
-// Get logged in user info
 exports.getMe = async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('-passwordHash');
@@ -108,7 +131,7 @@ exports.forgotPassword = async (req, res) => {
         const { email } = req.body;
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: 'User not exist !' });
         }
 
         const resetToken = crypto.randomBytes(20).toString('hex');
@@ -123,8 +146,7 @@ exports.forgotPassword = async (req, res) => {
 
         await user.save();
 
-
-        const resetURL = `${process.env.FRONT_END_URL}/reset-password/${resetToken}`;
+        const resetURL = `${process.env.BACK_END_URL}/api/auth/reset-password/${resetToken}`;
 
         const mailOptions = {
             from: process.env.EMAIL_USER,
@@ -154,10 +176,11 @@ exports.forgotPassword = async (req, res) => {
         res.status(500).send('Server Error');
     }
 }
+
 exports.resetPassword = async (req, res) => {
+    const redirectURL = `${process.env.FRONT_END_URL}/reset-password-success`;
     try {
         const { token } = req.params;
-        const { password } = req.body;
 
         const user = await User.findOne({
             resetPasswordToken: token,
@@ -168,17 +191,38 @@ exports.resetPassword = async (req, res) => {
             return res.status(400).json({ message: 'Invalid or expired password reset token' });
         }
 
-        const salt = await bcrypt.genSalt(10);
-        user.passwordHash = await bcrypt.hash(password, salt);
+        const newPassword = crypto.randomBytes(8).toString('hex');
+        console.log(newPassword);
+
+        user.passwordHash = newPassword;
+
         user.resetPasswordToken = undefined;
         user.resetPasswordExpires = undefined;
 
         await user.save();
 
-        res.json({ message: 'Password reset successful' });
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: user.email,
+            subject: 'Your password has been reset',
+            text: `Hello ${user.username},\n\n
+            Your password has been successfully reset. 
+            Here is your new password: ${newPassword}\n\n
+            Please change your password after logging in for security purposes.\n\n
+            Best Regards,\n
+            COMP_1640 Team`
+        };
+
+        transporter.sendMail(mailOptions, (error) => {
+            if (error) {
+                return res.status(500).json({ message: 'Password reset but email sending failed' });
+            } else {
+                res.redirect(redirectURL);
+            }
+        });
 
     } catch (err) {
         console.error('Error resetting password:', err.message);
         res.status(500).send('Server Error');
     }
-}
+};
