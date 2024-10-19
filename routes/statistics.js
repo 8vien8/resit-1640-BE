@@ -1,15 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const statisticsController = require('../controllers/statistics');
+const authMiddleware = require('../middleware/auth');
 
-router.get('/', statisticsController.getStatistics);
 
-router.get('/:id', statisticsController.getStatisticsById);
+router.get('/', authMiddleware, statisticsController.getStatistics);
 
-router.post('/', statisticsController.createStatistics);
+router.get('/:id', authMiddleware, statisticsController.getStatisticsById);
 
-router.put('/:id', statisticsController.updateStatistics);
+router.post('/', authMiddleware, statisticsController.createStatistics);
 
-router.delete('/:id', statisticsController.deleteStatistics);
+router.put('/:id', authMiddleware, statisticsController.updateStatistics);
+
+router.delete('/:id', authMiddleware, statisticsController.deleteStatistics);
 
 module.exports = router;

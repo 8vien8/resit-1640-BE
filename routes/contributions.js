@@ -1,15 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const contributionController = require('../controllers/contributions');
+const authMiddleware = require('../middleware/auth');
 
-router.get('/', contributionController.getContributions);
 
-router.get('/:id', contributionController.getContributionById);
+router.get('/', authMiddleware, contributionController.getContributions);
 
-router.post('/', contributionController.createContribution);
+router.get('/:id', authMiddleware, contributionController.getContributionById);
 
-router.put('/:id', contributionController.updateContribution);
+router.post('/', authMiddleware, contributionController.createContribution);
 
-router.delete('/:id', contributionController.deleteContribution);
+router.put('/:id', authMiddleware, contributionController.updateContribution);
+
+router.delete('/:id', authMiddleware, contributionController.deleteContribution);
 
 module.exports = router;

@@ -1,15 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const settingsController = require('../controllers/systemSettings');
+const authMiddleware = require('../middleware/auth');
 
-router.get('/', settingsController.getSettings);
 
-router.get('/:id', settingsController.getSettingById);
+router.get('/', authMiddleware, settingsController.getSettings);
 
-router.post('/', settingsController.createSetting);
+router.get('/:id', authMiddleware, settingsController.getSettingById);
 
-router.put('/:id', settingsController.updateSetting);
+router.post('/', authMiddleware, settingsController.createSetting);
 
-router.delete('/:id', settingsController.deleteSetting);
+router.put('/:id', authMiddleware, settingsController.updateSetting);
+
+router.delete('/:id', authMiddleware, settingsController.deleteSetting);
 
 module.exports = router;

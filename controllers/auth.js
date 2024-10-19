@@ -118,7 +118,7 @@ exports.login = async (req, res) => {
 
 exports.getMe = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).select('-passwordHash');
+        const user = await User.findById(req.user.id).select('-passwordHash').populate('roleID').populate('facultyID');
         res.json(user);
     } catch (err) {
         console.error(err.message);

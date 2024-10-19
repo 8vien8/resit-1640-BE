@@ -27,7 +27,7 @@ const UserSchema = new mongoose.Schema({
     },
     avatar: {
         type: String,
-        default: 'https://res.cloudinary.com/default_avatar.png'
+        default: 'https://ap.greenwich.edu.vn/favicon.ico'
     },
     resetPasswordToken: {
         type: String,

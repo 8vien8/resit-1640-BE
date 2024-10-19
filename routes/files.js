@@ -1,15 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const fileController = require('../controllers/files');
+const authMiddleware = require('../middleware/auth');
 
-router.get('/', fileController.getFiles);
 
-router.get('/:id', fileController.getFileById);
+router.get('/', authMiddleware, fileController.getFiles);
 
-router.post('/', fileController.createFile);
+router.get('/:id', authMiddleware, fileController.getFileById);
 
-router.put('/:id', fileController.updateFile);
+router.post('/', authMiddleware, fileController.createFile);
 
-router.delete('/:id', fileController.deleteFile);
+router.put('/:id', authMiddleware, fileController.updateFile);
+
+router.delete('/:id', authMiddleware, fileController.deleteFile);
 
 module.exports = router;
