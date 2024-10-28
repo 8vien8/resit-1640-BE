@@ -5,7 +5,8 @@ exports.getContributions = async (req, res) => {
         const contributions = await Contribution.find()
             .populate('userID')
             .populate('facultyID')
-            .populate('statusID');
+            .populate('statusID')
+            .populate('topicID');
         res.json(contributions);
     } catch (err) {
         res.status(500).send('Server Error');
@@ -17,7 +18,8 @@ exports.getContributionById = async (req, res) => {
         const contribution = await Contribution.findById(req.params.id)
             .populate('userID')
             .populate('facultyID')
-            .populate('statusID');
+            .populate('statusID')
+            .populate('topicID');
         if (!contribution) return res.status(404).send('Contribution not found');
         res.json(contribution);
     } catch (err) {
@@ -27,8 +29,17 @@ exports.getContributionById = async (req, res) => {
 
 exports.createContribution = async (req, res) => {
     try {
-        const { userID, facultyID, title, content, submissionDate, statusID, agreedToTnC } = req.body;
-        const newContribution = new Contribution({ userID, facultyID, title, content, submissionDate, statusID, agreedToTnC });
+        const { userID, facultyID, topicID, title, content, submissionDate, statusID, agreedToTnC } = req.body;
+        const newContribution = new Contribution({
+            userID,
+            facultyID,
+            topicID,
+            title,
+            content,
+            submissionDate,
+            statusID,
+            agreedToTnC,
+        });
         await newContribution.save();
         res.status(201).json(newContribution);
     } catch (err) {
@@ -38,14 +49,25 @@ exports.createContribution = async (req, res) => {
 
 exports.updateContribution = async (req, res) => {
     try {
-        const { userID, facultyID, title, content, submissionDate, statusID, agreedToTnC } = req.body;
+        const { userID, facultyID, topicID, title, content, submissionDate, statusID, agreedToTnC } = req.body;
         const updatedContribution = await Contribution.findByIdAndUpdate(
             req.params.id,
-            { userID, facultyID, title, content, submissionDate, statusID, agreedToTnC },
+            {
+                userID,
+                facultyID,
+                topicID,
+                title,
+                content,
+                submissionDate,
+                statusID,
+                agreedToTnC,
+            },
             { new: true }
-        ).populate('userID')
+        )
+            .populate('userID')
             .populate('facultyID')
-            .populate('statusID');
+            .populate('statusID')
+            .populate('topicID');
         if (!updatedContribution) return res.status(404).send('Contribution not found');
         res.json(updatedContribution);
     } catch (err) {

@@ -4,11 +4,20 @@ const ContributionSchema = new mongoose.Schema({
     userID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+        require: true
     },
     facultyID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Faculty',
+        required: true,
     },
+
+    topicID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Topic',
+        required: true,
+    },
+
     title: {
         type: String,
         required: true,

@@ -4,14 +4,14 @@ const facultyController = require('../controllers/faculties');
 const authMiddleware = require('../middleware/auth');
 
 
-router.get('/', authMiddleware, facultyController.getFaculties);
+router.get('/',  facultyController.getFaculties);
 
-router.get('/:id', authMiddleware, facultyController.getFacultyById);
+router.get('/:id',  facultyController.getFacultyById);
 
-router.post('/', authMiddleware, facultyController.createFaculty);
+router.post('/',  facultyController.createFaculty);
 
-router.put('/:id', authMiddleware, facultyController.updateFaculty);
+router.put('/:id',  facultyController.updateFaculty);
 
-router.delete('/:id', authMiddleware, facultyController.deleteFaculty);
+router.delete('/:id',  facultyController.deleteFaculty);
 
 module.exports = router;

@@ -4,14 +4,14 @@ const settingsController = require('../controllers/systemSettings');
 const authMiddleware = require('../middleware/auth');
 
 
-router.get('/', authMiddleware, settingsController.getSettings);
+router.get('/',  settingsController.getSettings);
 
-router.get('/:id', authMiddleware, settingsController.getSettingById);
+router.get('/:id',  settingsController.getSettingById);
 
-router.post('/', authMiddleware, settingsController.createSetting);
+router.post('/',  settingsController.createSetting);
 
-router.put('/:id', authMiddleware, settingsController.updateSetting);
+router.put('/:id',  settingsController.updateSetting);
 
-router.delete('/:id', authMiddleware, settingsController.deleteSetting);
+router.delete('/:id',  settingsController.deleteSetting);
 
 module.exports = router;

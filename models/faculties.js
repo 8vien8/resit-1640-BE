@@ -6,6 +6,11 @@ const FacultySchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
+    topics: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Topic',
+        required: true,
+    }
 }, { collection: 'faculties' });
 
 module.exports = mongoose.model('Faculty', FacultySchema);

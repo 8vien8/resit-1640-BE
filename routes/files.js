@@ -4,14 +4,14 @@ const fileController = require('../controllers/files');
 const authMiddleware = require('../middleware/auth');
 
 
-router.get('/', authMiddleware, fileController.getFiles);
+router.get('/',  fileController.getFiles);
 
-router.get('/:id', authMiddleware, fileController.getFileById);
+router.get('/:id',  fileController.getFileById);
 
-router.post('/', authMiddleware, fileController.createFile);
+router.post('/',  fileController.createFile);
 
-router.put('/:id', authMiddleware, fileController.updateFile);
+router.put('/:id',  fileController.updateFile);
 
-router.delete('/:id', authMiddleware, fileController.deleteFile);
+router.delete('/:id',  fileController.deleteFile);
 
 module.exports = router;

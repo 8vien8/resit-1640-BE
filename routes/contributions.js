@@ -4,14 +4,14 @@ const contributionController = require('../controllers/contributions');
 const authMiddleware = require('../middleware/auth');
 
 
-router.get('/', authMiddleware, contributionController.getContributions);
+router.get('/',  contributionController.getContributions);
 
-router.get('/:id', authMiddleware, contributionController.getContributionById);
+router.get('/:id',  contributionController.getContributionById);
 
-router.post('/', authMiddleware, contributionController.createContribution);
+router.post('/',  contributionController.createContribution);
 
-router.put('/:id', authMiddleware, contributionController.updateContribution);
+router.put('/:id',  contributionController.updateContribution);
 
-router.delete('/:id', authMiddleware, contributionController.deleteContribution);
+router.delete('/:id',  contributionController.deleteContribution);
 
 module.exports = router;

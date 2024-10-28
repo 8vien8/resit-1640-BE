@@ -15,6 +15,7 @@ const contributionStatusRoutes = require('./routes/contributionStatus');
 const contributionsRoutes = require('./routes/contributions');
 const commentsRoutes = require('./routes/comments');
 const authRoutes = require('./routes/auth');
+const topicsRoutes = require('./routes/topics');
 
 // Load environment variables
 require('dotenv').config();
@@ -37,8 +38,6 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use('/api/users', usersRoutes);
-app.use('/api/users/role', usersRoutes)
-app.use('/api/users/faculty', usersRoutes)
 app.use('/api/roles', rolesRoutes);
 app.use('/api/faculties', facultiesRoutes);
 app.use('/api/contributions', contributionsRoutes);
@@ -49,6 +48,7 @@ app.use('/api/terms-and-conditions', termsConditionsRoutes);
 app.use('/api/statistics', statisticsRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/topics', topicsRoutes);
 
 // Catch-all route for undefined routes
 app.use((req, res, next) => {
