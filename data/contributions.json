@@ -8,5 +8,15 @@
     "submissionDate": "2024-08-31T10:30:00Z",
     "statusID": { "$oid": "64f000000000000000000041" },
     "agreedToTnC": true
+  },
+  {
+    "_id": { "$oid": "64f000000000000000000032" },
+    "userID": { "$oid": "64f000000000000000000001" },
+    "facultyID": { "$oid": "64f000000000000000000022" },
+    "title": "Innovative AI Research 2",
+    "content": "Content of the contribution goes here... 2",
+    "submissionDate": "2024-08-31T10:30:00Z",
+    "statusID": { "$oid": "64f000000000000000000041" },
+    "agreedToTnC": true
   }
 ]

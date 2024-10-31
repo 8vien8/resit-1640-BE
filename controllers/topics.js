@@ -1,78 +1,70 @@
 const Topic = require('../models/topics');
-const Contribution = require('../models/contributions');
 
-// Get all topics, optionally filtered by facultyID
-exports.getTopics = async (req, res) => {
-    try {
-        const { facultyID } = req.query;
-        const query = facultyID ? { facultyID } : {};
-        const topics = await Topic.find(query).populate('facultyID');
-        res.json(topics);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ error: 'Server Error: Unable to retrieve topics' });
-    }
-};
-
-// Get a single topic by ID, including its contributions
-exports.getTopicById = async (req, res) => {
-    try {
-        const topic = await Topic.findById(req.params.id)
-            .populate('facultyID')
-            .populate('contributions');
-        if (!topic) return res.status(404).json({ error: 'Topic not found' });
-        res.json(topic);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ error: 'Server Error: Unable to retrieve topic' });
-    }
-};
-
-// Create a new topic
 exports.createTopic = async (req, res) => {
     try {
-        const { facultyID, topicName, releaseDate, endDate } = req.body;
-        const newTopic = new Topic({ facultyID, topicName, releaseDate, endDate });
-        await newTopic.save();
-        res.status(201).json(newTopic);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ error: 'Server Error: Unable to create topic' });
+        const { faculty, topicName, releaseDate, endDate } = req.body;
+        const topic = new Topic({ faculty, topicName, releaseDate, endDate });
+        const savedTopic = await topic.save();
+        res.status(201).json(savedTopic);
+    } catch (error) {
+        res.status(500).json({ message: 'Error creating topic', error });
     }
 };
 
-// Update an existing topic
+exports.getAllTopics = async (req, res) => {
+    try {
+        const topics = await Topic.find().populate('faculty');
+        res.status(200).json(topics);
+    } catch (error) {
+        res.status(500).json({ message: 'Error retrieving topics', error });
+    }
+};
+
+exports.getTopicById = async (req, res) => {
+    try {
+        const topic = await Topic.findById(req.params.id).populate('faculty');
+        if (!topic) return res.status(404).json({ message: 'Topic not found' });
+        res.status(200).json(topic);
+    } catch (error) {
+        res.status(500).json({ message: 'Error retrieving topic', error });
+    }
+};
+
 exports.updateTopic = async (req, res) => {
     try {
-        const { topicName, releaseDate, endDate } = req.body;
-        const updatedTopic = await Topic.findByIdAndUpdate(
+        const { faculty, topicName, releaseDate, endDate } = req.body;
+        const topic = await Topic.findByIdAndUpdate(
             req.params.id,
-            { topicName, releaseDate, endDate },
-            { new: true }
-        ).populate('facultyID');
-        if (!updatedTopic) return res.status(404).json({ error: 'Topic not found' });
-        res.json(updatedTopic);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ error: 'Server Error: Unable to update topic' });
+            { faculty, topicName, releaseDate, endDate },
+            { new: true, runValidators: true }
+        ).populate('faculty');
+
+        if (!topic) return res.status(404).json({ message: 'Topic not found' });
+        res.status(200).json(topic);
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating topic', error });
     }
 };
 
-// Delete a topic and optionally handle related contributions
 exports.deleteTopic = async (req, res) => {
     try {
         const topic = await Topic.findByIdAndDelete(req.params.id);
-        if (!topic) return res.status(404).json({ error: 'Topic not found' });
+        if (!topic) return res.status(404).json({ message: 'Topic not found' });
+        res.status(200).json({ message: 'Topic deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error deleting topic', error });
+    }
+};
 
-        // Optional: Delete or unlink contributions related to this topic
-        await Contribution.updateMany(
-            { topicID: req.params.id },
-            { $unset: { topicID: '' } } // Or delete contributions if needed
-        );
-
-        res.json({ message: 'Topic and associated contributions updated' });
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).json({ error: 'Server Error: Unable to delete topic' });
+exports.getTopicsByFacultyId = async (req, res) => {
+    try {
+        const { facultyId } = req.params;
+        const topics = await Topic.find({ faculty: facultyId }).populate('faculty', 'facultyName');
+        if (topics.length === 0) {
+            return res.status(404).json({ message: 'No topics found for this faculty' });
+        }
+        res.status(200).json(topics);
+    } catch (error) {
+        res.status(500).json({ message: 'Error retrieving topics', error: error.message });
     }
 };

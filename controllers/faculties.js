@@ -26,6 +26,9 @@ exports.createFaculty = async (req, res) => {
         await newFaculty.save();
         res.status(201).json(newFaculty);
     } catch (err) {
+        if (err.code === 11000) {
+            return res.status(400).json({ message: 'Faculty name already exists. Please use a unique name.' });
+        }
         res.status(500).send('Server Error');
     }
 };
