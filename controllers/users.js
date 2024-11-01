@@ -43,8 +43,7 @@ exports.getUsersByRole = async (req, res) => {
 exports.getUsersByFaculty = async (req, res) => {
     try {
         const { facultyID } = req.params;
-        const users = await User.find({ facultyID }).populate('roleID').populate('facultyID').select('-passwordHash');;
-
+        const users = await User.find({ facultyID }).populate('roleID').populate('facultyID').select('-passwordHash');
         if (users.length === 0) {
             return res.json(users);
         }
