@@ -30,7 +30,7 @@ exports.getUsersByRole = async (req, res) => {
         const users = await User.find({ roleID }).populate('roleID').populate('facultyID').select('-passwordHash');;
 
         if (users.length === 0) {
-            return res.status(404).json({ message: 'No users found for this role' });
+            return res.json(users);
         }
 
         res.json(users);
@@ -46,7 +46,7 @@ exports.getUsersByFaculty = async (req, res) => {
         const users = await User.find({ facultyID }).populate('roleID').populate('facultyID').select('-passwordHash');;
 
         if (users.length === 0) {
-            return res.status(404).json({ message: 'No users found for this faculty' });
+            return res.json(users);
         }
 
         res.json(users);

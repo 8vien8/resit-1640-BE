@@ -61,7 +61,7 @@ exports.getTopicsByFacultyId = async (req, res) => {
         const { facultyId } = req.params;
         const topics = await Topic.find({ faculty: facultyId }).populate('faculty', 'facultyName');
         if (topics.length === 0) {
-            return res.status(404).json({ message: 'No topics found for this faculty' });
+            return res.json(topics);
         }
         res.status(200).json(topics);
     } catch (error) {
