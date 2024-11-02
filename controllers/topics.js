@@ -59,7 +59,7 @@ exports.deleteTopic = async (req, res) => {
 exports.getTopicsByFacultyId = async (req, res) => {
     try {
         const { facultyId } = req.params;
-        const topics = await Topic.find({ faculty: facultyId }).populate('faculty', 'facultyName');
+        const topics = await Topic.find({ faculty: facultyId }).populate('faculty');
         if (topics.length === 0) {
             return res.json(topics);
         }

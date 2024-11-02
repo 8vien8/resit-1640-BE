@@ -3,10 +3,10 @@ const Contribution = require('../models/contributions');
 exports.getContributions = async (req, res) => {
     try {
         const contributions = await Contribution.find()
-            .populate('userID')
+            .populate('userID', 'username avatar email')
             .populate('facultyID')
             .populate('statusID')
-            .populate('topicID');
+            .populate('topicID')
         res.json(contributions);
     } catch (err) {
         res.status(500).send('Server Error');
@@ -16,10 +16,11 @@ exports.getContributions = async (req, res) => {
 exports.getContributionById = async (req, res) => {
     try {
         const contribution = await Contribution.findById(req.params.id)
-            .populate('userID')
+            .populate('userID', 'username avatar email')
             .populate('facultyID')
             .populate('statusID')
-            .populate('topicID');
+            .populate('topicID')
+
         if (!contribution) return res.status(404).send('Contribution not found');
         res.json(contribution);
     } catch (err) {
@@ -41,8 +42,9 @@ exports.createContribution = async (req, res) => {
             agreedToTnC,
         });
         await newContribution.save();
-        res.status(201).json(newContribution);
+        res.json(newContribution);
     } catch (err) {
+        console.error(err.message);
         res.status(500).send('Server Error');
     }
 };
@@ -50,6 +52,7 @@ exports.createContribution = async (req, res) => {
 exports.updateContribution = async (req, res) => {
     try {
         const { userID, facultyID, topicID, title, content, submissionDate, statusID, agreedToTnC } = req.body;
+
         const updatedContribution = await Contribution.findByIdAndUpdate(
             req.params.id,
             {
@@ -64,13 +67,26 @@ exports.updateContribution = async (req, res) => {
             },
             { new: true }
         )
-            .populate('userID')
+            .populate('userID', 'username avatar email')
             .populate('facultyID')
             .populate('statusID')
-            .populate('topicID');
+            .populate('topicID')
+            .lean();
+
         if (!updatedContribution) return res.status(404).send('Contribution not found');
+
+        if (updatedContribution.userID) {
+            updatedContribution.userID = {
+                id: updatedContribution.userID._id,
+                username: updatedContribution.userID.username,
+                avatar: updatedContribution.userID.avatar,
+                email: updatedContribution.userID.email
+            };
+        }
+
         res.json(updatedContribution);
     } catch (err) {
+        console.error(err.message);
         res.status(500).send('Server Error');
     }
 };
@@ -81,6 +97,22 @@ exports.deleteContribution = async (req, res) => {
         if (!contribution) return res.status(404).send('Contribution not found');
         res.json({ message: 'Contribution deleted' });
     } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+exports.getContributionsByTopicId = async (req, res) => {
+    try {
+        const { topicId } = req.params;
+        const contributions = await Contribution.find({ topicID: topicId })
+            .populate('userID', 'username avatar email')
+            .populate('facultyID')
+            .populate('statusID')
+            .populate('topicID')
+        res.json(contributions);
+    } catch (err) {
+        console.error('Error fetching contributions by topic:', err.message);
         res.status(500).send('Server Error');
     }
 };
