@@ -30,13 +30,14 @@ exports.getContributionById = async (req, res) => {
 
 exports.createContribution = async (req, res) => {
     try {
-        const { userID, facultyID, topicID, title, content, submissionDate, statusID, agreedToTnC } = req.body;
+        const { userID, facultyID, topicID, title, content, files, submissionDate, statusID, agreedToTnC } = req.body;
         const newContribution = new Contribution({
             userID,
             facultyID,
             topicID,
             title,
             content,
+            files,
             submissionDate,
             statusID,
             agreedToTnC,

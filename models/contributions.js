@@ -28,7 +28,6 @@ const ContributionSchema = new mongoose.Schema({
     },
     submissionDate: {
         type: Date,
-        required: true,
         default: Date.now,
     },
     statusID: {
@@ -39,6 +38,22 @@ const ContributionSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
     },
+    files: [
+        {
+            fileName: {
+                type: String,
+                required: true,
+            },
+            filePath: {
+                type: String,
+                required: true,
+            },
+            fileType: {
+                type: String,
+                required: true,
+            },
+        },
+    ],
 }, { collection: 'contributions' });
 
 module.exports = mongoose.model('Contribution', ContributionSchema);
