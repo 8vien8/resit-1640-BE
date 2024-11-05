@@ -54,6 +54,11 @@ const ContributionSchema = new mongoose.Schema({
             },
         },
     ],
+    comments: {
+        type: String,
+        default: 'wait for feedback'
+    },
+
 }, { collection: 'contributions' });
 
 module.exports = mongoose.model('Contribution', ContributionSchema);

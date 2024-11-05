@@ -30,7 +30,12 @@ exports.getContributionById = async (req, res) => {
 
 exports.createContribution = async (req, res) => {
     try {
-        const { userID, facultyID, topicID, title, content, files, submissionDate, statusID, agreedToTnC } = req.body;
+        const { userID, facultyID, topicID, title, content, submissionDate, statusID, agreedToTnC } = req.body;
+        const files = req.files ? req.files.map(file => ({
+            fileName: file.originalname,
+            filePath: file.path,
+            fileType: file.mimetype,
+        })) : [];
         const newContribution = new Contribution({
             userID,
             facultyID,
@@ -53,7 +58,11 @@ exports.createContribution = async (req, res) => {
 exports.updateContribution = async (req, res) => {
     try {
         const { userID, facultyID, topicID, title, content, submissionDate, statusID, agreedToTnC } = req.body;
-
+        const files = req.files ? req.files.map(file => ({
+            fileName: file.originalname,
+            filePath: file.path,
+            fileType: file.mimetype,
+        })) : undefined;
         const updatedContribution = await Contribution.findByIdAndUpdate(
             req.params.id,
             {
@@ -62,6 +71,7 @@ exports.updateContribution = async (req, res) => {
                 topicID,
                 title,
                 content,
+                files: files !== undefined ? files : undefined,
                 submissionDate,
                 statusID,
                 agreedToTnC,
@@ -72,7 +82,6 @@ exports.updateContribution = async (req, res) => {
             .populate('facultyID')
             .populate('statusID')
             .populate('topicID')
-            .lean();
 
         if (!updatedContribution) return res.status(404).send('Contribution not found');
 
@@ -117,3 +126,24 @@ exports.getContributionsByTopicId = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+
+exports.getContributionForStudent = async (req, res) => {
+    try {
+        const { userId, facultyId, topicId } = req.params;
+
+        if (!userId || !facultyId || !topicId) {
+            return res.status(400).json({ message: 'userID and topicID are required.' });
+        }
+        const contributions = await Contribution.find({ userID: userId, facultyID: facultyId, topicID: topicId });
+
+        if (!contributions) {
+            return res.status(404).json({ message: 'No contributions found for the provided userID and topicID.' });
+        }
+        console.log(userId, topicId, facultyId)
+
+        res.json(contributions);
+    } catch (err) {
+        console.error('Error fetching contributions for student:', err.message);
+        res.status(500).send('Server Error');
+    }
+}
