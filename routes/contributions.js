@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const contributionController = require('../controllers/contributions');
-const { uploadContribution } = require('../config/multer')
+// const uploadContribution = require('../config/multer')
 const authMiddleware = require('../middleware/auth');
-
+const { uploadContributionFiles } = require('../middleware/upload');
 
 router.get('/', contributionController.getContributions);
 
@@ -13,7 +13,7 @@ router.get('/topic/:topicId', contributionController.getContributionsByTopicId);
 
 router.get('/:userId/:facultyId/:topicId', contributionController.getContributionForStudent);
 
-router.post('/', contributionController.createContribution);
+router.post('/', uploadContributionFiles, contributionController.createContribution);
 
 router.put('/:id', contributionController.updateContribution);
 

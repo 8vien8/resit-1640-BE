@@ -51,7 +51,7 @@ const ContributionSchema = new mongoose.Schema({
             fileType: {
                 type: String,
                 required: true,
-            },
+            }
         },
     ],
     comments: {

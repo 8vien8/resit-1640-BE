@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const connectDB = require('./config/db');
-
+const path = require('path');
 //Router
 const usersRoutes = require('./routes/users');
 const termsConditionsRoutes = require('./routes/termConditions');
@@ -24,13 +24,13 @@ require('dotenv').config();
 connectDB();
 
 const app = express();
-
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 // app.use('/uploads', express.static('uploads')); // Serve static files from uploads directory
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Route for landing page
 app.get('/', (req, res) => {
     res.send('Welcome to the API');

@@ -30,12 +30,16 @@ exports.getContributionById = async (req, res) => {
 
 exports.createContribution = async (req, res) => {
     try {
-        const { userID, facultyID, topicID, title, content, submissionDate, statusID, agreedToTnC } = req.body;
+        const { userID, facultyID, topicID, title, content, statusID, submissionDate, agreedToTnC } = req.body;
+
+        // If there are files, map them to include URLs for access
         const files = req.files ? req.files.map(file => ({
             fileName: file.originalname,
-            filePath: file.path,
+            filePath: `${req.protocol}://${req.get('host')}/uploads/contribution/${file.filename}`, // Accessible URL
             fileType: file.mimetype,
         })) : [];
+
+        // Create new contribution with the provided details
         const newContribution = new Contribution({
             userID,
             facultyID,
@@ -47,13 +51,18 @@ exports.createContribution = async (req, res) => {
             statusID,
             agreedToTnC,
         });
+
+        // Save to the database
         await newContribution.save();
-        res.json(newContribution);
+
+        // Return the new contribution data in the response
+        res.status(201).json(newContribution);
     } catch (err) {
-        console.error(err.message);
+        console.error('Error creating contribution:', err.message);
         res.status(500).send('Server Error');
     }
 };
+
 
 exports.updateContribution = async (req, res) => {
     try {
@@ -101,13 +110,55 @@ exports.updateContribution = async (req, res) => {
     }
 };
 
-exports.deleteContribution = async (req, res) => {
+exports.updateContribution = async (req, res) => {
     try {
-        const contribution = await Contribution.findByIdAndDelete(req.params.id);
-        if (!contribution) return res.status(404).send('Contribution not found');
-        res.json({ message: 'Contribution deleted' });
+        const { userID, facultyID, topicID, title, content, submissionDate, statusID, agreedToTnC } = req.body;
+
+        // If new files are uploaded, map them to include accessible URLs
+        const files = req.files ? req.files.map(file => ({
+            fileName: file.originalname,
+            filePath: `${req.protocol}://${req.get('host')}/uploads/contribution/${file.filename}`, // Accessible URL
+            fileType: file.mimetype,
+        })) : undefined;
+
+        // Update the contribution in the database
+        const updatedContribution = await Contribution.findByIdAndUpdate(
+            req.params.id,
+            {
+                userID,
+                facultyID,
+                topicID,
+                title,
+                content,
+                files: files !== undefined ? files : undefined,
+                submissionDate,
+                statusID,
+                agreedToTnC,
+            },
+            { new: true }
+        )
+            .populate('userID', 'username avatar email')
+            .populate('facultyID')
+            .populate('statusID')
+            .populate('topicID');
+
+        // If the contribution doesn't exist, return a 404 error
+        if (!updatedContribution) return res.status(404).send('Contribution not found');
+
+        // Format the user details for the response
+        if (updatedContribution.userID) {
+            updatedContribution.userID = {
+                id: updatedContribution.userID._id,
+                username: updatedContribution.userID.username,
+                avatar: updatedContribution.userID.avatar,
+                email: updatedContribution.userID.email
+            };
+        }
+
+        // Return the updated contribution as a response
+        res.json(updatedContribution);
     } catch (err) {
-        console.error(err.message);
+        console.error('Error updating contribution:', err.message);
         res.status(500).send('Server Error');
     }
 };
