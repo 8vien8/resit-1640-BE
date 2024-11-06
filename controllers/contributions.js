@@ -67,52 +67,6 @@ exports.createContribution = async (req, res) => {
 exports.updateContribution = async (req, res) => {
     try {
         const { userID, facultyID, topicID, title, content, submissionDate, statusID, agreedToTnC } = req.body;
-        const files = req.files ? req.files.map(file => ({
-            fileName: file.originalname,
-            filePath: file.path,
-            fileType: file.mimetype,
-        })) : undefined;
-        const updatedContribution = await Contribution.findByIdAndUpdate(
-            req.params.id,
-            {
-                userID,
-                facultyID,
-                topicID,
-                title,
-                content,
-                files: files !== undefined ? files : undefined,
-                submissionDate,
-                statusID,
-                agreedToTnC,
-            },
-            { new: true }
-        )
-            .populate('userID', 'username avatar email')
-            .populate('facultyID')
-            .populate('statusID')
-            .populate('topicID')
-
-        if (!updatedContribution) return res.status(404).send('Contribution not found');
-
-        if (updatedContribution.userID) {
-            updatedContribution.userID = {
-                id: updatedContribution.userID._id,
-                username: updatedContribution.userID.username,
-                avatar: updatedContribution.userID.avatar,
-                email: updatedContribution.userID.email
-            };
-        }
-
-        res.json(updatedContribution);
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server Error');
-    }
-};
-
-exports.updateContribution = async (req, res) => {
-    try {
-        const { userID, facultyID, topicID, title, content, submissionDate, statusID, agreedToTnC } = req.body;
 
         // If new files are uploaded, map them to include accessible URLs
         const files = req.files ? req.files.map(file => ({
@@ -159,6 +113,17 @@ exports.updateContribution = async (req, res) => {
         res.json(updatedContribution);
     } catch (err) {
         console.error('Error updating contribution:', err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+exports.deleteContribution = async (req, res) => {
+    try {
+        const contribution = await Contribution.findByIdAndDelete(req.params.id);
+        if (!contribution) return res.status(404).send('Contribution not found');
+        res.json({ message: 'Contribution deleted' });
+    } catch (err) {
+        console.error(err.message);
         res.status(500).send('Server Error');
     }
 };
