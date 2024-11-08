@@ -56,7 +56,7 @@ const ContributionSchema = new mongoose.Schema({
     ],
     comments: {
         type: String,
-        default: 'wait for feedback'
+        default: 'Wait for Feedback ',
     },
 
 }, { collection: 'contributions' });

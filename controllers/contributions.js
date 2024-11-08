@@ -66,7 +66,7 @@ exports.createContribution = async (req, res) => {
 
 exports.updateContribution = async (req, res) => {
     try {
-        const { userID, facultyID, topicID, title, content, submissionDate, statusID, agreedToTnC } = req.body;
+        const { userID, facultyID, topicID, title, content, submissionDate, statusID, comments, agreedToTnC } = req.body;
 
         // If new files are uploaded, map them to include accessible URLs
         const files = req.files ? req.files.map(file => ({
@@ -88,6 +88,7 @@ exports.updateContribution = async (req, res) => {
                 submissionDate: Date.now(),
                 statusID,
                 agreedToTnC,
+                comments
             },
             { new: true }
         )
