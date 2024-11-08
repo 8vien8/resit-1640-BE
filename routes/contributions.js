@@ -15,7 +15,7 @@ router.get('/:userId/:facultyId/:topicId', contributionController.getContributio
 
 router.post('/', uploadContributionFiles, contributionController.createContribution);
 
-router.put('/:id', contributionController.updateContribution);
+router.put('/:id', uploadContributionFiles, contributionController.updateContribution);
 
 router.delete('/:id', contributionController.deleteContribution);
 

@@ -71,7 +71,7 @@ exports.updateContribution = async (req, res) => {
         // If new files are uploaded, map them to include accessible URLs
         const files = req.files ? req.files.map(file => ({
             fileName: file.originalname,
-            filePath: `${req.protocol}://${req.get('host')}/uploads/contribution/${file.filename}`, // Accessible URL
+            filePath: `${req.protocol}://${req.get('host')}/uploads/contribution/${file.filename}`,
             fileType: file.mimetype,
         })) : undefined;
 
@@ -85,16 +85,12 @@ exports.updateContribution = async (req, res) => {
                 title,
                 content,
                 files: files !== undefined ? files : undefined,
-                submissionDate,
+                submissionDate: Date.now(),
                 statusID,
                 agreedToTnC,
             },
             { new: true }
         )
-            .populate('userID', 'username avatar email')
-            .populate('facultyID')
-            .populate('statusID')
-            .populate('topicID');
 
         // If the contribution doesn't exist, return a 404 error
         if (!updatedContribution) return res.status(404).send('Contribution not found');
@@ -150,7 +146,7 @@ exports.getContributionForStudent = async (req, res) => {
         if (!userId || !facultyId || !topicId) {
             return res.status(400).json({ message: 'userID and topicID are required.' });
         }
-        const contributions = await Contribution.find({ userID: userId, facultyID: facultyId, topicID: topicId });
+        const contributions = await Contribution.find({ userID: userId, facultyID: facultyId, topicID: topicId }).populate('statusID');
 
         if (!contributions) {
             return res.status(404).json({ message: 'No contributions found for the provided userID and topicID.' });
