@@ -30,7 +30,7 @@ exports.getContributionById = async (req, res) => {
 
 exports.createContribution = async (req, res) => {
     try {
-        const { userID, facultyID, topicID, title, content, statusID, submissionDate, agreedToTnC } = req.body;
+        const { userID, facultyID, topicID, title, content, submissionDate, agreedToTnC } = req.body;
 
         // If there are files, map them to include URLs for access
         const files = req.files ? req.files.map(file => ({
@@ -48,7 +48,6 @@ exports.createContribution = async (req, res) => {
             content,
             files,
             submissionDate,
-            statusID,
             agreedToTnC,
         });
 

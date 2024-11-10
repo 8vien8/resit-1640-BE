@@ -33,6 +33,7 @@ const ContributionSchema = new mongoose.Schema({
     statusID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Contribution_Status',
+        default: '64f000000000000000000041',
     },
     agreedToTnC: {
         type: Boolean,
