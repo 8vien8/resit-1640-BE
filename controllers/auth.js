@@ -11,16 +11,14 @@ exports.register = async (req, res) => {
         const defaultFacultyID = facultyID || "64f000000000000000000021"
         const password = crypto.randomBytes(10).toString('hex');
 
-        // Check if the user already exists
         let user = await User.findOne({ email });
         if (user) {
             return res.status(400).json({ message: 'User already exists' });
         }
 
-        // Create a new user
         user = new User({
             username,
-            passwordHash: password,  // You should hash the password here
+            passwordHash: password,
             email,
             roleID: defaultRoleID,
             facultyID: defaultFacultyID,
@@ -29,8 +27,8 @@ exports.register = async (req, res) => {
         await user.save();
 
         const mailOptions = {
-            from: process.env.EMAIL_USER,  // Sender's email address
-            to: email,  // Recipient's email address
+            from: process.env.EMAIL_USER,
+            to: email, 
             subject: 'Welcome to COMP_1640 - Your Account Details',
             text: `--------------------------------Hello ${username}---------------------------\n
                    Welcome to COMP_1640! Your account has been created successfully.\n
@@ -51,7 +49,6 @@ exports.register = async (req, res) => {
             }
         });
 
-        // Create a JWT
         const payload = {
             user: {
                 id: user.id,
@@ -78,19 +75,16 @@ exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Check if the user exists
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        // Check password
         const isMatch = await user.comparePassword(password);
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid credentials (password)' });
         }
 
-        // Create a JWT
         const payload = {
             user: {
                 id: user.id,
