@@ -8,7 +8,7 @@ exports.register = async (req, res) => {
     try {
         const { username, email, roleID, facultyID } = req.body;
         const defaultRoleID = roleID || "64f000000000000000000015";
-        const defaultFacultyID = facultyID || "64f000000000000000000021"
+        const defaultFacultyID = facultyID || "672f5c343c9809b85f68afd0"
         const password = crypto.randomBytes(10).toString('hex');
 
         let user = await User.findOne({ email });
@@ -28,7 +28,7 @@ exports.register = async (req, res) => {
 
         const mailOptions = {
             from: process.env.EMAIL_USER,
-            to: email, 
+            to: email,
             subject: 'Welcome to COMP_1640 - Your Account Details',
             text: `--------------------------------Hello ${username}---------------------------\n
                    Welcome to COMP_1640! Your account has been created successfully.\n
@@ -89,7 +89,9 @@ exports.login = async (req, res) => {
             user: {
                 id: user.id,
                 roleID: user.roleID
-            }
+            },
+            "iat": 1697701123,
+            "exp": 1697704723
         };
 
         jwt.sign(

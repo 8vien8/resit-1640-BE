@@ -1,5 +1,6 @@
 const Contribution = require('../models/contributions');
 const transporter = require('../config/nodemailer');
+const User = require('../models/users');
 
 exports.getContributions = async (req, res) => {
     try {
@@ -52,6 +53,17 @@ exports.createContribution = async (req, res) => {
 
         await newContribution.save();
 
+        const coordinators = await User.find({ roleID: 'Coordinator', facultyID: facultyID });
+        const mailPromises = coordinators.map(coordinator =>
+            transporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: coordinator.email,
+                subject: 'New Contribution Created',
+                text: `A new contribution has been submitted:\n\nTitle: ${title}\nSubmitted by: ${userID}\nFaculty: ${facultyID}\nTopic: ${topicID}\nSubmission Date: ${submissionDate}\n\nPlease review it.`,
+            })
+        );
+        await Promise.all(mailPromises);
+
         res.status(201).json(newContribution);
     } catch (err) {
         console.error('Error creating contribution:', err.message);
@@ -97,6 +109,19 @@ exports.updateContribution = async (req, res) => {
                 email: updatedContribution.userID.email
             };
         }
+
+        const coordinators = await User.find({ roleID: 'Coordinator', facultyID: facultyID }); // Filter by roleID and facultyID
+
+        const mailPromises = coordinators.map(coordinator =>
+            transporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: coordinator.email,
+                subject: 'Contribution Updated',
+                text: `A contribution has been updated:\n\nTitle: ${title}\nUpdated by: ${userID}\nFaculty: ${facultyID}\nTopic: ${topicID}\nUpdate Date: ${submissionDate}\n\nPlease review the updates.`,
+            })
+        );
+
+        await Promise.all(mailPromises);
         res.json(updatedContribution);
     } catch (err) {
         console.error('Error updating contribution:', err.message);
