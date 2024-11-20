@@ -1,7 +1,7 @@
 const Contribution = require('../models/contributions');
 const transporter = require('../config/nodemailer');
 const User = require('../models/users');
-
+const Topic = require('../models/topics');
 exports.getContributions = async (req, res) => {
     try {
         const contributions = await Contribution.find()
@@ -32,13 +32,15 @@ exports.getContributionById = async (req, res) => {
 
 exports.createContribution = async (req, res) => {
     try {
-        const { userID, facultyID, topicID, title, content, submissionDate, agreedToTnC } = req.body;
+        const { userID, facultyID, topicID, title, content, agreedToTnC } = req.body;
 
         const files = req.files ? req.files.map(file => ({
             fileName: file.originalname,
-            filePath: `${req.protocol}://${req.get('host')}/uploads/contribution/${file.filename}`, // Accessible URL
+            filePath: `${req.protocol}://${req.get('host')}/uploads/contribution/${file.filename}`, // URL có thể truy cập
             fileType: file.mimetype,
         })) : [];
+
+        const submissionDate = Date.now();
 
         const newContribution = new Contribution({
             userID,
@@ -53,13 +55,24 @@ exports.createContribution = async (req, res) => {
 
         await newContribution.save();
 
-        const coordinators = await User.find({ roleID: 'Coordinator', facultyID: facultyID });
+        const user = await User.findById(userID);
+        const username = user ? user.username : 'Unknown User';
+
+        const topic = await Topic.findById(topicID);
+        const topicName = topic ? topic.topicName : 'Unknown Topic';
+
+        const coordinators = await User.find({ roleID: '64f000000000000000000013', facultyID: facultyID });
         const mailPromises = coordinators.map(coordinator =>
             transporter.sendMail({
                 from: process.env.EMAIL_USER,
                 to: coordinator.email,
                 subject: 'New Contribution Created',
-                text: `A new contribution has been submitted:\n\nTitle: ${title}\nSubmitted by: ${userID}\nFaculty: ${facultyID}\nTopic: ${topicID}\nSubmission Date: ${submissionDate}\n\nPlease review it.`,
+                text: `A new contribution has been submitted:\n\n
+                Title: ${title}\n
+                Submitted by: ${username}\n
+                Topic: ${topicName}\n
+                Submission Date: ${new Date(submissionDate).toLocaleString()}\n\n
+                Please review it.`,
             })
         );
         await Promise.all(mailPromises);
@@ -71,16 +84,17 @@ exports.createContribution = async (req, res) => {
     }
 };
 
-
 exports.updateContribution = async (req, res) => {
     try {
-        const { userID, facultyID, topicID, title, content, submissionDate, statusID, comments, agreedToTnC } = req.body;
+        const { userID, facultyID, topicID, title, content, statusID, comments, agreedToTnC } = req.body;
 
         const files = req.files ? req.files.map(file => ({
             fileName: file.originalname,
             filePath: `${req.protocol}://${req.get('host')}/uploads/contribution/${file.filename}`,
             fileType: file.mimetype,
-        })) : undefined;
+        })) : [];
+
+        const submissionDate = Date.now();
 
         const updatedContribution = await Contribution.findByIdAndUpdate(
             req.params.id,
@@ -90,34 +104,35 @@ exports.updateContribution = async (req, res) => {
                 topicID,
                 title,
                 content,
-                files: files !== undefined ? files : undefined,
-                submissionDate: Date.now(),
+                files,
+                submissionDate,
                 statusID,
                 agreedToTnC,
                 comments
             },
             { new: true }
-        )
+        );
 
         if (!updatedContribution) return res.status(404).send('Contribution not found');
 
-        if (updatedContribution.userID) {
-            updatedContribution.userID = {
-                id: updatedContribution.userID._id,
-                username: updatedContribution.userID.username,
-                avatar: updatedContribution.userID.avatar,
-                email: updatedContribution.userID.email
-            };
-        }
+        const user = await User.findById(userID);
+        const username = user ? user.username : 'Unknown User';
 
-        const coordinators = await User.find({ roleID: 'Coordinator', facultyID: facultyID }); // Filter by roleID and facultyID
+        const topic = await User.findById(topicID);
+        const topicName = topic ? topic.topicName : 'Unknown Topic';
+
+        const coordinators = await User.find({ roleID: '64f000000000000000000013', facultyID });
 
         const mailPromises = coordinators.map(coordinator =>
             transporter.sendMail({
                 from: process.env.EMAIL_USER,
                 to: coordinator.email,
                 subject: 'Contribution Updated',
-                text: `A contribution has been updated:\n\nTitle: ${title}\nUpdated by: ${userID}\nFaculty: ${facultyID}\nTopic: ${topicID}\nUpdate Date: ${submissionDate}\n\nPlease review the updates.`,
+                text: `A contribution has been updated:\n\n
+                Title: ${title}\n
+                Updated by: ${username}\n
+                Topic: ${topicName}\n
+                Update Date: ${new Date(submissionDate).toLocaleString()}\n\nPlease review the updates.`,
             })
         );
 
