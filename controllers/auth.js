@@ -90,8 +90,6 @@ exports.login = async (req, res) => {
                 id: user.id,
                 roleID: user.roleID
             },
-            "iat": 1697701123,
-            "exp": 1697704723
         };
 
         jwt.sign(
