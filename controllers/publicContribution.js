@@ -1,6 +1,5 @@
 const PublicContribution = require('../models/publicContribution');
 
-// Tạo mới Public Contribution
 exports.createPublicContribution = async (req, res) => {
     try {
         const { contributionID, } = req.body;
@@ -16,7 +15,6 @@ exports.createPublicContribution = async (req, res) => {
     }
 };
 
-// Lấy danh sách tất cả Public Contributions
 exports.getPublicContributions = async (req, res) => {
     try {
         const publicContributions = await PublicContribution.find()
@@ -27,7 +25,6 @@ exports.getPublicContributions = async (req, res) => {
     }
 };
 
-// Lấy chi tiết một Public Contribution theo ID
 exports.getPublicContributionById = async (req, res) => {
     try {
         const { id } = req.params;
@@ -44,7 +41,6 @@ exports.getPublicContributionById = async (req, res) => {
     }
 };
 
-// Cập nhật Public Contribution theo ID
 exports.updatePublicContribution = async (req, res) => {
     try {
         const { id } = req.params;
@@ -66,7 +62,6 @@ exports.updatePublicContribution = async (req, res) => {
     }
 };
 
-// Xóa Public Contribution theo ID
 exports.deletePublicContribution = async (req, res) => {
     try {
         const { id } = req.params;
