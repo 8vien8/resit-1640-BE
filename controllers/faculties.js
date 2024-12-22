@@ -1,4 +1,5 @@
 const Faculty = require('../models/faculties');
+const User = require('../models/users');
 
 exports.getFaculties = async (req, res) => {
     try {
@@ -50,10 +51,23 @@ exports.updateFaculty = async (req, res) => {
 
 exports.deleteFaculty = async (req, res) => {
     try {
-        const faculty = await Faculty.findByIdAndDelete(req.params.id);
-        if (!faculty) return res.status(404).send('Faculty not found');
-        res.json({ message: 'Faculty deleted' });
+        const facultyID = req.params.id;
+
+        const memberCount = await User.countDocuments({ facultyID });
+        if (memberCount > 0) {
+            return res.status(400).json({
+                message: `Cannot delete faculty. There are ${memberCount} member assigned to this faculty.`,
+            });
+        }
+
+        const faculty = await Faculty.findByIdAndDelete(facultyID);
+        if (!faculty) {
+            return res.status(404).send('Faculty not found');
+        }
+
+        res.json({ message: 'Faculty deleted successfully.' });
     } catch (err) {
+        console.error(err);
         res.status(500).send('Server Error');
     }
 };

@@ -1,4 +1,5 @@
 const Topic = require('../models/topics');
+const Contribution = require('../models/contributions');
 
 exports.createTopic = async (req, res) => {
     try {
@@ -48,13 +49,21 @@ exports.updateTopic = async (req, res) => {
 
 exports.deleteTopic = async (req, res) => {
     try {
-        const topic = await Topic.findByIdAndDelete(req.params.id);
-        if (!topic) return res.status(404).json({ message: 'Topic not found' });
-        res.status(200).json({ message: 'Topic deleted successfully' });
+        const topic = await Topic.findById(req.params.id);
+        if (!topic) {
+            return res.status(404).json({ message: 'Topic not found' });
+        }
+
+        await Contribution.deleteMany({ topicID: req.params.id });
+
+        await Topic.findByIdAndDelete(req.params.id);
+
+        res.status(200).json({ message: 'Topic and related contributions deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Error deleting topic', error });
     }
 };
+
 
 exports.getTopicsByFacultyId = async (req, res) => {
     try {
