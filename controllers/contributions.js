@@ -86,7 +86,7 @@ exports.createContribution = async (req, res) => {
 
 exports.updateContribution = async (req, res) => {
     try {
-        const { userID, facultyID, topicID, title, content, statusID, comments, agreedToTnC } = req.body;
+        const { userID, facultyID, topicID, title, content, statusID, comments, agreedToTnC, updateUserRole } = req.body;
 
         const files = req.files ? req.files.map(file => ({
             fileName: file.originalname,
@@ -118,25 +118,50 @@ exports.updateContribution = async (req, res) => {
         const user = await User.findById(userID);
         const username = user ? user.username : 'Unknown User';
 
-        const topic = await User.findById(topicID);
+        const topic = await Topic.findById(topicID);
         const topicName = topic ? topic.topicName : 'Unknown Topic';
 
-        const coordinators = await User.find({ roleID: '64f000000000000000000013', facultyID });
+        // Handle email sending based on the updateUserRole
+        let mailPromises;
 
-        const mailPromises = coordinators.map(coordinator =>
-            transporter.sendMail({
-                from: process.env.EMAIL_USER,
-                to: coordinator.email,
-                subject: 'Contribution Updated',
-                text: `A contribution has been updated:\n\n
-                Title: ${title}\n
-                Updated by: ${username}\n
-                Topic: ${topicName}\n
-                Update Date: ${new Date(submissionDate).toLocaleString()}\n\nPlease review the updates.`,
-            })
-        );
+        if (updateUserRole === '64f000000000000000000013') {  // Coordinator updating the contribution
+            const student = await User.findById(userID);
+            const studentEmail = student ? student.email : null;
 
-        await Promise.all(mailPromises);
+            if (studentEmail) {
+                mailPromises = [
+                    transporter.sendMail({
+                        from: process.env.EMAIL_USER,
+                        to: studentEmail,
+                        subject: 'Your Contribution Has Been Graded',
+                        text: `Your contribution has been updated:\n\n
+                        Title: ${title}\n
+                        Topic: ${topicName}\n
+                        Update Date: ${new Date(submissionDate).toLocaleString()}\n\nPlease review the updates.`
+                    })
+                ];
+            }
+        } else if (updateUserRole === '64f000000000000000000014') {  // Student updating the contribution
+            const coordinators = await User.find({ roleID: '64f000000000000000000013', facultyID: facultyID });
+
+            mailPromises = coordinators.map(coordinator =>
+                transporter.sendMail({
+                    from: process.env.EMAIL_USER,
+                    to: coordinator.email,
+                    subject: 'Contribution Updated',
+                    text: `A contribution has been updated student:\n\n
+                    Title: ${title}\n
+                    Updated by: ${username}\n
+                    Topic: ${topicName}\n
+                    Update Date: ${new Date(submissionDate).toLocaleString()}\n\nPlease review the updates.`
+                })
+            );
+        }
+
+        if (mailPromises) {
+            await Promise.all(mailPromises);
+        }
+
         res.json(updatedContribution);
     } catch (err) {
         console.error('Error updating contribution:', err.message);
@@ -182,7 +207,6 @@ exports.getContributionForStudent = async (req, res) => {
         if (!contributions) {
             return res.status(404).json({ message: 'No contributions found for the provided userID and topicID.' });
         }
-        console.log(userId, topicId, facultyId)
 
         res.json(contributions);
     } catch (err) {
